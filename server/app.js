@@ -3,16 +3,27 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 dotenv.config();
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT;
+const PREFIX = process.env.API_PREFIX;
 
-app.use(cors());
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    methods: "*",
+  }),
+);
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+import userRoutes from "./routes/user.routes.js";
+import todoRoutes from "./routes/todo.routes.js";
+
+app.use(`/${PREFIX}`, userRoutes);
+app.use(`/${PREFIX}`, todoRoutes);
 
 const connectDB = async () => {
   try {
