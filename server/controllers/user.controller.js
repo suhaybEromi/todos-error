@@ -12,7 +12,7 @@ const createRefreshToken = user =>
     expiresIn: "7d",
   });
 
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -20,7 +20,7 @@ export const signup = async (req, res) => {
     if (existingUser)
       return res
         .status(400)
-        .json({ message: "User already exists. Please sign in." });
+        .json({ message: "Email already exists. Please sign in." });
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
   }
 };
 
-export const signin = async (req, res) => {
+const signin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -80,31 +80,25 @@ export const signin = async (req, res) => {
 export const refresh = async (req, res) => {
   try {
     const refreshToken = req.cookies.refresh_token;
-    if (!refreshToken)
-      return res.status(401).json({ message: "No refresh token" });
+    if (!refreshToken) return res.status(401).json({ message: "No token" });
 
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-      if (err)
-        return res.status(403).json({ message: "Invalid refresh token" });
+    const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const newAccessToken = createAccessToken({ _id: user.id });
 
-      const newAccessToken = createAccessToken({ _id: user.id });
-
-      res.cookie("access_token", newAccessToken, {
-        httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 15 * 60 * 1000,
-      });
-
-      res.json({ message: "Access token refreshed" });
+    res.cookie("access_token", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
     });
+
+    return res.json({ message: "Token refreshed" });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(403).json({ message: "Invalid refresh token" });
   }
 };
 
-export const logout = async (req, res) => {
+const logout = async (req, res) => {
   try {
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");

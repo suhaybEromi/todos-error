@@ -31,17 +31,6 @@ const addTodo = async (req, res) => {
     const { title, description, problemSteps, fixSteps, code, status } =
       req.body;
 
-    if (
-      !title ||
-      !description ||
-      !problemSteps ||
-      !fixSteps ||
-      !code ||
-      !status
-    ) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
     let imageUrl = null;
     if (req.file) {
       imageUrl = `/uploads/${req.file.filename}`;
@@ -55,7 +44,7 @@ const addTodo = async (req, res) => {
       code,
       status,
       imageUrl,
-      //   userId: req.user?._id,
+      //  createdBy: req.user?._id,
     });
 
     await newTodo.save();
