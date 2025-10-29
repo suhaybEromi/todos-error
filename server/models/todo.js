@@ -7,7 +7,7 @@ const todoSchema = new Schema(
     description: { type: String, required: true },
     problemSteps: { type: String, required: true },
     fixSteps: { type: String, required: true },
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String },
     code: { type: String, required: true },
     status: {
       type: String,

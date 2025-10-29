@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import path from "path";
 dotenv.config();
 import cookieParser from "cookie-parser";
 
@@ -21,6 +22,8 @@ app.use(express.json());
 
 import userRoutes from "./routes/user.routes.js";
 import todoRoutes from "./routes/todo.routes.js";
+
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use(`/${PREFIX}`, userRoutes);
 app.use(`/${PREFIX}`, todoRoutes);

@@ -114,3 +114,5 @@ export const logout = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+export default { signup, signin, refresh, logout };
