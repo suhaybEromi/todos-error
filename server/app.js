@@ -7,7 +7,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 4000;
 const PREFIX = process.env.API_PREFIX;
 const PREFIX_AUTH = process.env.API_AUTH_PREFIX;
 import session from "express-session";
@@ -26,12 +26,20 @@ app.use(
     credentials: true,
   }),
 );
+
 app.use(express.json());
+
 app.use(
   session({
-    secret: "secret",
+    secret: process.env.SESSION_SECRET || "keyboard_cat",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // Only true with HTTPS
+      httpOnly: true, // Prevents JS access to cookies
+      sameSite: "lax", // Helps with cross-site auth
+      maxAge: 24 * 60 * 60 * 1000, // Optional: 1 day
+    },
   }),
 );
 
@@ -43,10 +51,6 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(`/${PREFIX}`, userRoutes);
 app.use(`/${PREFIX}`, todoRoutes);
 app.use(`/${PREFIX_AUTH}`, authRoutes);
-
-app.get("/", (req, res) => {
-  res.send("<a href='/auth/google'>google</a>");
-});
 
 const connectDB = async () => {
   try {

@@ -7,6 +7,8 @@ import {
   handleValidationErrors,
 } from "../validation/validateUser.js";
 
+import auth from "../middlewares/authMiddleware.js";
+
 router.post(
   "/signup",
   validateSignup,
@@ -19,6 +21,9 @@ router.post(
   handleValidationErrors,
   userController.signin,
 );
+
+router.get("/me", auth, userController.profile);
+
 router.get("/refresh", userController.refresh);
 router.post("/logout", userController.logout);
 
