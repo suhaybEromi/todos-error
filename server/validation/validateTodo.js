@@ -13,8 +13,8 @@ export const handleValidationErrors = (req, res, next) => {
 export const validateTodo = [
   body("title")
     .trim()
-    .isLength({ min: 3, max: 200 })
-    .withMessage("Title must be 3–200 characters"),
+    .isLength({ min: 3, max: 250 })
+    .withMessage("Title must be 3–250 characters"),
 
   body("description")
     .trim()

@@ -15,7 +15,7 @@ const todoSchema = new Schema(
       default: "pending",
       required: true,
     },
-    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true },
 );

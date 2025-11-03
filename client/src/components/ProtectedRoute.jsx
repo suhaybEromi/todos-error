@@ -6,12 +6,8 @@ export default function ProtectedRoute({ children }) {
   const { user, loading } = useContext(AuthContext);
 
   // 🕓 Wait until we know if user is logged in
-  if (loading)
-    return (
-      <div className="flex h-screen items-center justify-center text-gray-500">
-        Checking session...
-      </div>
-    );
+  if (loading) return;
+  <div className="flex h-screen items-center justify-center text-gray-500"></div>;
 
   // 🔐 Once loaded, redirect if no user
   if (!user) return <Navigate to="/signin" replace />;

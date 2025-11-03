@@ -3,7 +3,7 @@ import deleteFile from "../utils/deleteFile.js";
 
 const getTodos = async (req, res) => {
   try {
-    const todos = await Todo.find();
+    const todos = await Todo.find({ createdBy: req.user.id });
 
     if (!todos) return res.status(404).json({ message: "No todos found" });
 
@@ -17,7 +17,7 @@ const getTodosById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const todo = await Todo.findById(id);
+    const todo = await Todo.findById({ _id: id, createdBy: req.user.id });
     if (!todo) return res.status(404).json({ message: "Todo not found" });
 
     return res.status(200).json(todo);
@@ -44,7 +44,7 @@ const addTodo = async (req, res) => {
       code,
       status,
       imageUrl,
-      //  createdBy: req.user?._id,
+      createdBy: req.user.id,
     });
 
     await newTodo.save();
@@ -65,7 +65,10 @@ const updateTodo = async (req, res) => {
       req.body;
 
     // 1️⃣ Find existing todo first
-    const existingTodo = await Todo.findById(id);
+    const existingTodo = await Todo.findById({
+      _id: id,
+      createdBy: req.user.id,
+    });
     if (!existingTodo)
       return res.status(404).json({ message: "Todo not found" });
 
@@ -106,9 +109,12 @@ const deleteTodo = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const todo = await Todo.findByIdAndDelete(id);
+    const todo = await Todo.findByIdAndDelete({
+      _id: id,
+      createdBy: req.user.id,
+    });
 
-    if (!id) return res.status(404).json({ message: "Todo not found" });
+    if (!todo) return res.status(404).json({ message: "Todo not found" });
 
     if (todo.imageUrl) {
       await deleteFile(todo.imageUrl);
