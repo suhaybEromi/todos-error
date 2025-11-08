@@ -31,21 +31,38 @@ export default function AuthContextProvider({ children }) {
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        await api.get("/refresh"); // refresh access token silently
-        const res = await api.get("/me"); // get current user info
+        // try to refresh token
+        await api.get("/refresh");
+
+        // now try to get user info
+        const res = await api.get("/me");
         setUser(res.data);
       } catch (err) {
+        // if backend says unauthorized (401), that’s normal after logout
+        if (err.response && [401, 404].includes(err.response.status)) {
+          console.log("No active session — user is logged out.");
+        } else {
+          console.error("Error restoring session:", err);
+        }
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
+
     restoreSession();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, loading, signup, signin, logout }}
+      value={{
+        user,
+        setUser,
+        loading,
+        signup,
+        signin,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

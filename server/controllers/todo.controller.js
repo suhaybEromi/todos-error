@@ -1,129 +1,120 @@
 import Todo from "../models/todo.js";
 import deleteFile from "../utils/deleteFile.js";
 
+// 🟢 Get all todos for logged-in user
 const getTodos = async (req, res) => {
   try {
-    const todos = await Todo.find({ createdBy: req.user.id });
+    const todos = await Todo.find({ createdBy: req.user.id }).sort({
+      createdAt: -1,
+    });
 
-    if (!todos) return res.status(404).json({ message: "No todos found" });
-
-    return res.status(200).json(todos);
+    res.status(200).json(todos);
   } catch (err) {
-    console.log(err);
+    console.error("Error getting todos:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-const getTodosById = async (req, res) => {
+// 🟢 Get single todo by ID
+const getTodoById = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const todo = await Todo.findById({ _id: id, createdBy: req.user.id });
+    const todo = await Todo.findOne({
+      _id: req.params.id,
+      createdBy: req.user.id,
+    });
     if (!todo) return res.status(404).json({ message: "Todo not found" });
 
-    return res.status(200).json(todo);
+    res.status(200).json(todo);
   } catch (err) {
-    console.log(err);
+    console.error("Error getting todo by id:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
+// 🟢 Add new todo
 const addTodo = async (req, res) => {
   try {
-    const { title, description, problemSteps, fixSteps, code, status } =
+    const { title, description, problemSteps, fixSteps, code, status, type } =
       req.body;
 
-    let imageUrl = null;
-    if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
-    }
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
-    const newTodo = new Todo({
+    const todo = new Todo({
       title,
       description,
       problemSteps,
       fixSteps,
       code,
       status,
+      type,
       imageUrl,
       createdBy: req.user.id,
     });
 
-    await newTodo.save();
+    await todo.save();
 
-    return res.status(201).json({
-      message: "Todo created successfully",
-      todo: newTodo,
-    });
+    res.status(201).json({ message: "Todo created successfully", todo });
   } catch (err) {
-    console.log(err);
+    console.error("Error adding todo:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
+// 🟢 Update existing todo
 const updateTodo = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, problemSteps, fixSteps, code, status } =
-      req.body;
 
-    // 1️⃣ Find existing todo first
-    const existingTodo = await Todo.findById({
+    const existingTodo = await Todo.findOne({
       _id: id,
       createdBy: req.user.id,
     });
     if (!existingTodo)
       return res.status(404).json({ message: "Todo not found" });
 
-    // 2️⃣ If new image uploaded → delete old image
     if (req.file && existingTodo.imageUrl) {
       await deleteFile(existingTodo.imageUrl);
     }
 
-    // 3️⃣ Prepare updated fields
     const updatedFields = {
-      title,
-      description,
-      problemSteps,
-      fixSteps,
-      code,
-      status,
+      ...req.body,
       imageUrl: req.file
         ? `/uploads/${req.file.filename}`
-        : existingTodo.imageUrl, // keep old image if no new file
+        : existingTodo.imageUrl,
     };
 
-    // 4️⃣ Update todo
-    const updatedTodo = await Todo.findByIdAndUpdate(id, updatedFields, {
-      new: true,
-    });
+    const updatedTodo = await Todo.findByIdAndUpdate(
+      id,
+      { $set: updatedFields },
+      { new: true },
+    );
 
-    return res.status(200).json({
-      message: "Todo updated successfully",
-      todo: updatedTodo,
-    });
+    res
+      .status(200)
+      .json({ message: "Todo updated successfully", todo: updatedTodo });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    console.error("Error updating todo:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
+// 🟢 Delete todo
 const deleteTodo = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const todo = await Todo.findByIdAndDelete({
-      _id: id,
+    const todo = await Todo.findOneAndDelete({
+      _id: req.params.id,
       createdBy: req.user.id,
     });
 
     if (!todo) return res.status(404).json({ message: "Todo not found" });
 
-    if (todo.imageUrl) {
-      await deleteFile(todo.imageUrl);
-    }
+    if (todo.imageUrl) await deleteFile(todo.imageUrl);
 
-    return res.status(200).json({ message: "Todo deleted successfully" });
+    res.status(200).json({ message: "Todo deleted successfully" });
   } catch (err) {
-    console.log(err);
+    console.error("Error deleting todo:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-export default { getTodos, getTodosById, addTodo, updateTodo, deleteTodo };
+export default { getTodos, getTodoById, addTodo, updateTodo, deleteTodo };

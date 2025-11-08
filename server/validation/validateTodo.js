@@ -1,6 +1,6 @@
 import { body, param, validationResult } from "express-validator";
 
-// Reusable error handler
+// 🟡 Shared validation error handler
 export const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -9,12 +9,12 @@ export const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Validate Todo creation & update
+// 🟢 Validation for create & update
 export const validateTodo = [
   body("title")
     .trim()
-    .isLength({ min: 3, max: 250 })
-    .withMessage("Title must be 3–250 characters"),
+    .isLength({ min: 3, max: 200 })
+    .withMessage("Title must be between 3 and 200 characters"),
 
   body("description")
     .trim()
@@ -22,20 +22,37 @@ export const validateTodo = [
     .withMessage("Description must be at least 10 characters"),
 
   body("problemSteps")
+    .isArray({ min: 1 })
+    .withMessage("Problem steps must be a non-empty array"),
+  body("problemSteps.*")
     .trim()
+    .isString()
     .notEmpty()
-    .withMessage("Problem steps are required"),
+    .withMessage("Each problem step must be a non-empty string"),
 
-  body("fixSteps").trim().notEmpty().withMessage("Fix steps are required"),
+  body("fixSteps")
+    .isArray({ min: 1 })
+    .withMessage("Fix steps must be a non-empty array"),
+  body("fixSteps.*")
+    .trim()
+    .isString()
+    .notEmpty()
+    .withMessage("Each fix step must be a non-empty string"),
 
-  body("code").trim().isLength({ min: 1 }).withMessage("Code is required"),
-
+  body("code").optional().isString().trim(),
   body("status")
-    .isIn(["pending", "resolved"])
-    .withMessage("Status must be 'pending' or 'resolved'"),
+    .isIn(["In Progress", "Complete"])
+    .withMessage("Invalid status value"),
+
+  body("type")
+    .trim()
+    .isString()
+    .withMessage("Type must be a string")
+    .notEmpty()
+    .withMessage("Type is required"),
 ];
 
-// Validate ID param
+// 🟢 Validation for :id params
 export const validateId = [
   param("id").isMongoId().withMessage("Invalid Todo ID"),
 ];

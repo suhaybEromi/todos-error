@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import api from "../api/api";
 
 const TodoForm = ({ selectedTodo, onSuccess }) => {
@@ -8,21 +8,24 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
     problemSteps: "",
     fixSteps: "",
     code: "",
-    status: "pending",
+    status: "In Progress",
+    type: "",
     image: null,
   });
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState("");
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (selectedTodo) {
       setFormData({
         title: selectedTodo.title || "",
         description: selectedTodo.description || "",
-        problemSteps: selectedTodo.problemSteps || "",
-        fixSteps: selectedTodo.fixSteps || "",
+        problemSteps: (selectedTodo.problemSteps || []).join("\n"),
+        fixSteps: (selectedTodo.fixSteps || []).join("\n"),
         code: selectedTodo.code || "",
-        status: selectedTodo.status || "pending",
+        status: selectedTodo.status || "In Progress",
+        type: selectedTodo.type || "",
         image: null,
       });
       setPreview(
@@ -49,9 +52,25 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
     setError("");
 
     const data = new FormData();
-    for (const key in formData) {
-      if (formData[key]) data.append(key, formData[key]);
-    }
+
+    // Convert multiline text to array for backend
+    const problemStepsArray = formData.problemSteps
+      .split("\n")
+      .map(s => s.trim())
+      .filter(Boolean);
+    const fixStepsArray = formData.fixSteps
+      .split("\n")
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    problemStepsArray.forEach(step => data.append("problemSteps[]", step));
+    fixStepsArray.forEach(step => data.append("fixSteps[]", step));
+    if (formData.code) data.append("code", formData.code);
+    if (formData.type) data.append("type", formData.type);
+    data.append("status", formData.status);
+    if (formData.image) data.append("image", formData.image);
 
     try {
       if (selectedTodo) {
@@ -63,6 +82,7 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
+
       onSuccess();
       setFormData({
         title: "",
@@ -70,10 +90,13 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
         problemSteps: "",
         fixSteps: "",
         code: "",
-        status: "pending",
+        status: "In Progress",
+        type: "",
         image: null,
       });
       setPreview(null);
+
+      if (fileInputRef.current) fileInputRef.current.value = ""; // ✅ clear file input
     } catch (err) {
       setError(err.response?.data?.message || "Error submitting form");
     }
@@ -97,6 +120,7 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
         value={formData.title}
         onChange={handleChange}
         className="w-full border p-2 rounded"
+        required
       />
 
       <textarea
@@ -105,24 +129,28 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
         value={formData.description}
         onChange={handleChange}
         className="w-full border p-2 rounded"
+        required
       />
 
       <textarea
         name="problemSteps"
-        placeholder="Problem Steps"
+        placeholder="Problem Steps (each step on new line)"
         value={formData.problemSteps}
         onChange={handleChange}
         className="w-full border p-2 rounded"
+        required
       />
 
       <textarea
         name="fixSteps"
-        placeholder="Fix Steps"
+        placeholder="Fix Steps (each step on new line)"
         value={formData.fixSteps}
         onChange={handleChange}
         className="w-full border p-2 rounded"
+        required
       />
 
+      <label className="block mb-1">Code (optional)</label>
       <textarea
         name="code"
         placeholder="Code"
@@ -131,19 +159,35 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
         className="w-full border p-2 rounded"
       />
 
+      <input
+        type="text"
+        name="type"
+        placeholder="Type (e.g. Bug, UI, Server)"
+        value={formData.type}
+        onChange={handleChange}
+        className="w-full border p-2 rounded"
+        required
+      />
+
       <select
         name="status"
         value={formData.status}
         onChange={handleChange}
         className="w-full border p-2 rounded"
       >
-        <option value="pending">Pending</option>
-        <option value="resolved">Resolved</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Complete">Complete</option>
       </select>
 
       <div>
         <label className="block mb-1">Image (optional)</label>
-        <input type="file" accept="image/*,.txt" onChange={handleFileChange} />
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+
         {preview && (
           <img
             src={preview}

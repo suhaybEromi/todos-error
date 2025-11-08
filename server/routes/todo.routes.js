@@ -17,7 +17,7 @@ router.get(
   auth,
   validateId,
   handleValidationErrors,
-  todoController.getTodosById,
+  todoController.getTodoById,
 );
 
 router.post(

@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 const TodoList = ({ todos, onEdit, onDelete }) => {
@@ -12,13 +11,13 @@ const TodoList = ({ todos, onEdit, onDelete }) => {
         >
           <div>
             <h3 className="font-bold text-lg">{todo.title}</h3>
-            <p className="text-sm text-gray-600">{todo.description}</p>
+            <p className="text-sm text-gray-600">{todo.type}</p>
             <p>
               Status: <strong>{todo.status}</strong>
             </p>
             {todo.imageUrl && (
               <img
-                src={`http://localhost:4000${todo.imageUrl}`}
+                src={`${import.meta.env.VITE_API_IMAGE}${todo.imageUrl}`}
                 alt="Todo"
                 className="w-24 h-24 mt-2 rounded object-cover"
               />

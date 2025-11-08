@@ -3,18 +3,19 @@ const { Schema } = mongoose;
 
 const todoSchema = new Schema(
   {
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    problemSteps: { type: String, required: true },
-    fixSteps: { type: String, required: true },
+    title: { type: String, required: true, trim: true },
+    description: { type: String, required: true, trim: true },
+    problemSteps: [{ type: String, required: true, trim: true }],
+    fixSteps: [{ type: String, required: true, trim: true }],
     imageUrl: { type: String },
-    code: { type: String, required: true },
+    code: { type: String },
     status: {
       type: String,
-      enum: ["pending", "resolved"],
-      default: "pending",
+      enum: ["In Progress", "Complete"],
+      default: "In Progress",
       required: true,
     },
+    type: { type: String, required: true, trim: true },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true },
