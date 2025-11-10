@@ -4,7 +4,6 @@ import TodoList from "../components/TodoList";
 
 const Todos = () => {
   const [todos, setTodos] = useState([]);
-  const [selectedTodo, setSelectedTodo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchTodos = async () => {
@@ -35,12 +34,8 @@ const Todos = () => {
   if (loading) return <p></p>;
 
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-6">
-      <TodoList
-        todos={todos}
-        onEdit={setSelectedTodo}
-        onDelete={handleDelete}
-      />
+    <div>
+      <TodoList todos={todos} onDelete={handleDelete} />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import api from "../api/api";
+import { useNavigate, useParams } from "react-router-dom";
 
-const TodoForm = ({ selectedTodo, onSuccess }) => {
+const TodoForm = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -13,28 +14,42 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
     image: null,
   });
   const [preview, setPreview] = useState(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState({});
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+  const { id } = useParams(); // get todo id from URL
 
   useEffect(() => {
-    if (selectedTodo) {
-      setFormData({
-        title: selectedTodo.title || "",
-        description: selectedTodo.description || "",
-        problemSteps: (selectedTodo.problemSteps || []).join("\n"),
-        fixSteps: (selectedTodo.fixSteps || []).join("\n"),
-        code: selectedTodo.code || "",
-        status: selectedTodo.status || "In Progress",
-        type: selectedTodo.type || "",
-        image: null,
-      });
-      setPreview(
-        selectedTodo.imageUrl
-          ? `${import.meta.env.VITE_API_IMAGE}${selectedTodo.imageUrl}`
-          : null,
-      );
-    }
-  }, [selectedTodo]);
+    const fetchTodo = async () => {
+      if (id) {
+        try {
+          const res = await api.get(`/todo/${id}`);
+          const todo = res.data;
+
+          setFormData({
+            title: todo.title || "",
+            description: todo.description || "",
+            problemSteps: (todo.problemSteps || []).join("\n"),
+            fixSteps: (todo.fixSteps || []).join("\n"),
+            code: todo.code || "",
+            status: todo.status || "In Progress",
+            type: todo.type || "",
+            image: null,
+          });
+
+          setPreview(
+            todo.imageUrl
+              ? `${import.meta.env.VITE_API_IMAGE}${todo.imageUrl}`
+              : null,
+          );
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+
+    fetchTodo();
+  }, [id]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -73,8 +88,8 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
     if (formData.image) data.append("image", formData.image);
 
     try {
-      if (selectedTodo) {
-        await api.put(`/update-todo/${selectedTodo._id}`, data, {
+      if (id) {
+        await api.put(`/update-todo/${id}`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
@@ -83,7 +98,6 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
         });
       }
 
-      onSuccess();
       setFormData({
         title: "",
         description: "",
@@ -95,115 +109,206 @@ const TodoForm = ({ selectedTodo, onSuccess }) => {
         image: null,
       });
       setPreview(null);
+      navigate("/");
 
       if (fileInputRef.current) fileInputRef.current.value = ""; // ✅ clear file input
     } catch (err) {
-      setError(err.response?.data?.message || "Error submitting form");
+      const backendErrors = err.response?.data?.errors;
+
+      if (backendErrors) {
+        const formatted = {};
+        backendErrors.forEach(e => {
+          formatted[e.field] = e.message;
+        });
+        setError(formatted);
+      } else {
+        setError(err.response?.data?.message || "Error submitting form");
+      }
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-3 bg-white p-4 rounded-xl shadow"
-    >
-      <h2 className="text-xl font-semibold">
-        {selectedTodo ? "Update Todo" : "Add New Todo"}
+    <div className="bg-slate-950">
+      <br />
+      <h2 className="mt-2 mb-8 text-center text-2xl font-semibold font-mono">
+        {id ? "Update Todo" : "Add New Todo"}
       </h2>
 
-      {error && <p className="text-red-500">{error}</p>}
-
-      <input
-        type="text"
-        name="title"
-        placeholder="Title"
-        value={formData.title}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-        required
-      />
-
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={formData.description}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-        required
-      />
-
-      <textarea
-        name="problemSteps"
-        placeholder="Problem Steps (each step on new line)"
-        value={formData.problemSteps}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-        required
-      />
-
-      <textarea
-        name="fixSteps"
-        placeholder="Fix Steps (each step on new line)"
-        value={formData.fixSteps}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-        required
-      />
-
-      <label className="block mb-1">Code (optional)</label>
-      <textarea
-        name="code"
-        placeholder="Code"
-        value={formData.code}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-      />
-
-      <input
-        type="text"
-        name="type"
-        placeholder="Type (e.g. Bug, UI, Server)"
-        value={formData.type}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-        required
-      />
-
-      <select
-        name="status"
-        value={formData.status}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
+      <form
+        className="p-3 md:px-10 lg:p-4 text-white rounded grid grid-cols-2 gap-6  lg:w-270 mx-auto max-w-3xl lg:max-w-none"
+        onSubmit={handleSubmit}
       >
-        <option value="In Progress">In Progress</option>
-        <option value="Complete">Complete</option>
-      </select>
-
-      <div>
-        <label className="block mb-1">Image (optional)</label>
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-
-        {preview && (
-          <img
-            src={preview}
-            alt="Preview"
-            className="mt-2 w-32 h-32 object-cover rounded"
+        <div className="col-span-2 lg:col-span-1">
+          <label className="font-medium">Title</label>
+          <br />
+          <input
+            type="text"
+            name="title"
+            placeholder="Title"
+            value={formData.title}
+            onChange={handleChange}
+            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 
+      ${
+        error.title
+          ? "border-red-500 focus:ring-red-500"
+          : "focus:ring-blue-400"
+      }`}
+            required
           />
-        )}
-      </div>
+          {error.title && (
+            <p className="text-red-500 text-sm mt-1">{error.title}</p>
+          )}
+        </div>
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        {selectedTodo ? "Update" : "Create"}
-      </button>
-    </form>
+        <div className="col-span-2 lg:col-span-1">
+          <label className="font-medium">Description</label>
+          <br />
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={formData.description}
+            onChange={handleChange}
+            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 
+      ${
+        error.description
+          ? "border-red-500 focus:ring-red-500"
+          : "focus:ring-blue-400"
+      }`}
+            required
+            rows={4}
+          />
+          {error.description && (
+            <p className="text-red-500 text-sm mt-1">{error.description}</p>
+          )}
+        </div>
+
+        <div className="col-span-2 lg:col-span-1">
+          <label className="font-medium">Problem Steps</label>
+          <br />
+          <textarea
+            name="problemSteps"
+            placeholder="Problem Steps (each step on new line)"
+            value={formData.problemSteps}
+            onChange={handleChange}
+            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 focus:ring-blue-400 
+            ${
+              error.problemSteps
+                ? "border-red-500 focus:ring-red-500"
+                : "focus:ring-blue-400"
+            }`}
+            rows={4}
+            required
+          />
+          {error.problemSteps && (
+            <p className="text-red-500 text-sm mt-1">{error.problemSteps}</p>
+          )}
+        </div>
+
+        <div className="col-span-2 lg:col-span-1">
+          <label className="font-medium">Fix Steps</label>
+          <br />
+          <textarea
+            name="fixSteps"
+            placeholder="Fix Steps (each step on new line)"
+            value={formData.fixSteps}
+            onChange={handleChange}
+            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 focus:ring-blue-400
+            ${
+              error.fixSteps
+                ? "border-red-500 focus:ring-red-500"
+                : "focus:ring-blue-400"
+            }`}
+            rows={4}
+            required
+          />
+          {error.fixSteps && (
+            <p className="text-red-500 text-sm mt-1">{error.fixSteps}</p>
+          )}
+        </div>
+
+        <div className="col-span-2">
+          <label className="font-medium">Code (optional)</label>
+          <div className="relative mt-2">
+            <textarea
+              name="code"
+              placeholder="// Write your code here..."
+              value={formData.code}
+              onChange={handleChange}
+              rows={8}
+              className="font-mono text-sm text-white bg-gray-900 border border-gray-300 rounded-lg p-4 w-75 md:w-150 lg:w-full resize-y shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            />
+          </div>
+        </div>
+
+        <div className="col-span-2">
+          <label className="font-medium">Image (optional)</label>
+          <br />
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="mt-1 border p-3 rounded w-75 md:w-150 lg:w-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          {preview && (
+            <img
+              src={preview}
+              alt="Preview"
+              className="mt-2 w-32 h-32 object-cover rounded"
+            />
+          )}
+        </div>
+
+        <div className="col-span-2 md:col-span-1 lg:col-span-1">
+          <label className="font-medium">Type</label>
+          <br />
+          <input
+            type="text"
+            name="type"
+            placeholder="Type (e.g. Bug, UI, Server, English)"
+            value={formData.type}
+            onChange={handleChange}
+            className={`mt-1 border p-2 rounded w-75 md:w-67 lg:w-full focus:outline-none focus:ring-2 focus:ring-blue-400
+            ${
+              error.type
+                ? "border-red-500 focus:ring-red-500"
+                : "focus:ring-blue-400"
+            }`}
+            required
+          />
+          {error.type && (
+            <p className="text-red-500 text-sm mt-1">{error.type}</p>
+          )}
+        </div>
+
+        <div className="col-span-2 md:col-span-1 lg:col-span-1">
+          <label className="font-medium md:-ms-11 lg:ms-11">Status</label>
+          <br />
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className=" mt-1 border p-2 rounded w-75 md:w-73 lg:w-full md:-ms-12 lg:ms-12 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option className="bg-gray-900" value="In Progress">
+              In Progress
+            </option>
+            <option className="bg-gray-900" value="Complete">
+              Complete
+            </option>
+          </select>
+        </div>
+
+        <div className="col-span-2 flex justify-center lg:justify-start md:-ms-27 lg:ms-0">
+          <button
+            type="submit"
+            className="cursor-pointer w-40 md:w-60 lg:w-60 mb-6 items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            {id ? "Update" : "Create"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -10,7 +10,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-900 text-white shadow-md">
+    <nav>
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
         <h1 className="text-xl font-bold text-yellow-400">ErrorTodos</h1>
@@ -22,24 +22,38 @@ export default function Navbar() {
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  `hover:text-yellow-400 transition ${
-                    isActive ? "text-yellow-400" : ""
-                  }`
-                }
-              >
-                Home
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/todos"
-                className={({ isActive }) =>
-                  `hover:text-yellow-400 transition ${
-                    isActive ? "text-yellow-400" : ""
+                  `hover:text-white transition ${
+                    isActive ? "text-white font-bold" : ""
                   }`
                 }
               >
                 Todos
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/board-todos"
+                className={({ isActive }) =>
+                  `hover:text-white transition ${
+                    isActive ? "text-white font-bold" : ""
+                  }`
+                }
+              >
+                Board Todo
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/add-todo"
+                className={({ isActive }) =>
+                  `hover:text-white transition ${
+                    isActive ? "text-white font-bold" : ""
+                  }`
+                }
+              >
+                Add Todo
               </NavLink>
             </li>
           </ul>
@@ -48,12 +62,14 @@ export default function Navbar() {
         {/* Right-side Auth Buttons */}
         <div className="flex items-center space-x-4">
           {user ? (
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400 transition"
-            >
-              Logout
-            </button>
+            <div>
+              {/* <button
+                onClick={handleLogout}
+                className="cursor-pointer bg-sky-700 text-white px-4 py-2 rounded-lg hover:bg-sky-800 transition"
+              >
+                Logout
+              </button> */}
+            </div>
           ) : (
             <>
               <NavLink

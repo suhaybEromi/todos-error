@@ -8,14 +8,18 @@ import Navbar from "./components/Navbar";
 import { useContext } from "react";
 import Todos from "./pages/Todos";
 import TodoDetails from "./pages/TodoDetails";
+import TodoForm from "./components/TodoForm";
+import BoardTodos from "./pages/BoardTodos";
+import NotFound from "./components/NotFound";
 
 function AppRoutes() {
   const { user, loading } = useContext(AuthContext);
   if (loading) return <></>;
 
   return (
-    <>
+    <div className="bg-linear-to-br from-gray-950 to-sky-950 text-white min-h-screen">
       <Navbar />
+      <hr className="-mt-1" />
       <Routes>
         <Route
           path="/signup"
@@ -26,11 +30,13 @@ function AppRoutes() {
           element={!user ? <Signin /> : <Navigate to="/" replace />}
         />
 
+        <Route path="*" element={<NotFound />} />
+
         <Route
-          path="/"
+          path="/board-todos"
           element={
             <ProtectedRoute>
-              <Home />
+              <BoardTodos />
             </ProtectedRoute>
           }
         />
@@ -45,7 +51,25 @@ function AppRoutes() {
         />
 
         <Route
-          path="/todos"
+          path="/add-todo"
+          element={
+            <ProtectedRoute>
+              <TodoForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-todo/:id"
+          element={
+            <ProtectedRoute>
+              <TodoForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/"
           element={
             <ProtectedRoute>
               <Todos />
@@ -53,7 +77,7 @@ function AppRoutes() {
           }
         />
       </Routes>
-    </>
+    </div>
   );
 }
 

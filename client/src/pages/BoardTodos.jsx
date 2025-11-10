@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
-import TodoForm from "../components/TodoForm";
 import TodoList from "../components/TodoList";
 
-const TodosPage = () => {
+const BoardTodos = () => {
   const [todos, setTodos] = useState([]);
-  const [selectedTodo, setSelectedTodo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchTodos = async () => {
@@ -29,11 +27,6 @@ const TodosPage = () => {
     }
   };
 
-  const handleSuccess = () => {
-    setSelectedTodo(null);
-    fetchTodos();
-  };
-
   useEffect(() => {
     fetchTodos();
   }, []);
@@ -42,14 +35,9 @@ const TodosPage = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-6">
-      <TodoForm selectedTodo={selectedTodo} onSuccess={handleSuccess} />
-      <TodoList
-        todos={todos}
-        onEdit={setSelectedTodo}
-        onDelete={handleDelete}
-      />
+      <TodoList todos={todos} onDelete={handleDelete} />
     </div>
   );
 };
 
-export default TodosPage;
+export default BoardTodos;

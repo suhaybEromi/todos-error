@@ -1,9 +1,9 @@
-import TodosPage from "./TodosPage";
+import BoardTodos from "./BoardTodos";
 
 export default function Home() {
   return (
     <div>
-      <TodosPage />
+      <BoardTodos />
     </div>
   );
 }
