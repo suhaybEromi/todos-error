@@ -24,116 +24,103 @@ const TodoDetails = () => {
     fetchTodo();
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading)
+    return <p className="text-white text-center mt-10">Loading...</p>;
+  if (error) return <p className="text-red-500 text-center">{error}</p>;
   if (!todo) return <p>No data found.</p>;
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg p-6 rounded-xl space-y-5">
-      {/* Back button */}
-      <Link
-        to="/"
-        className="inline-block bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
-      >
-        ← Back
-      </Link>
-
-      {/* Title */}
-      <h2 className="text-3xl font-bold text-gray-800">{todo.title}</h2>
-
-      {/* ID */}
-      <p className="text-sm text-gray-500">ID: {todo._id}</p>
-
-      {/* Description */}
-      <div>
-        <h3 className="font-semibold text-lg">Description:</h3>
-        <p className="text-gray-700 whitespace-pre-wrap">{todo.description}</p>
-      </div>
-
-      {/* Problem Steps */}
-      {todo.problemSteps && (
-        <div>
-          <h3 className="font-semibold text-lg">Problem Steps:</h3>
-          <pre className="bg-gray-100 p-3 rounded text-sm whitespace-pre-wrap">
-            {todo.problemSteps}
-          </pre>
-        </div>
-      )}
-
-      {/* Fix Steps */}
-      {todo.fixSteps && (
-        <div>
-          <h3 className="font-semibold text-lg">Fix Steps:</h3>
-          <pre className="bg-green-50 p-3 rounded text-sm whitespace-pre-wrap">
-            {todo.fixSteps}
-          </pre>
-        </div>
-      )}
-
-      {todo.type && (
-        <div>
-          <h3 className="font-semibold text-lg">Type</h3>
-          <pre className="bg-green-50 p-3 rounded text-sm whitespace-pre-wrap">
-            {todo.type}
-          </pre>
-        </div>
-      )}
-
-      {/* Code */}
-      {todo.code && (
-        <div>
-          <h3 className="font-semibold text-lg">Code:</h3>
-          <SyntaxHighlighter language="javascript" style={atomDark}>
-            {todo.code}
-          </SyntaxHighlighter>
-        </div>
-      )}
-
-      {/* Status */}
-      <p>
-        <strong>Status:</strong>{" "}
-        <span
-          className={`${
-            todo.status === "resolved" ? "text-green-600" : "text-yellow-600"
-          } font-semibold`}
+    <div className="bg-linear-to-r from-gray-950 to-indigo-950 min-h-screen p-4 sm:p-6 text-white">
+      {/* Back Button */}
+      <div className="max-w-6xl mx-auto mb-4 sm:mb-6">
+        <Link
+          to="/"
+          className="bg-gray-200 text-black px-4 py-2 rounded hover:bg-gray-300 text-sm sm:text-base"
         >
-          {todo.status}
-        </span>
-      </p>
-
-      {/* Dates */}
-      <div className="text-sm text-gray-600 space-y-1">
-        <p>
-          <strong>Created At:</strong>{" "}
-          {todo.createdAt
-            ? new Date(todo.createdAt).toLocaleString()
-            : "Not available"}
-        </p>
+          ← Back
+        </Link>
       </div>
 
-      {/* Image */}
-      {todo.imageUrl && (
-        <div>
-          <h3 className="font-semibold mb-1">Attached File:</h3>
-          {todo.imageUrl.endsWith(".txt") ? (
-            <a
-              href={`${import.meta.env.VITE_API_IMAGE}${todo.imageUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline"
-            >
-              View Text File
-            </a>
-          ) : (
-            <img
-              src={`${import.meta.env.VITE_API_IMAGE}${todo.imageUrl}`}
-              alt="Todo"
-              className="rounded-lg w-full max-w-md object-cover"
-              onError={e => (e.target.style.display = "none")}
-            />
+      {/* Main Container */}
+      <div className="w-full max-w-4xl mx-auto px-3 sm:px-0">
+        {/* Header (Mobile Friendly Layout) */}
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">{todo.title}</h1>
+
+          <span className="text-gray-400 text-base sm:text-xl">
+            {todo.createdAt
+              ? new Date(todo.createdAt).toLocaleDateString()
+              : "Not available"}
+          </span>
+
+          {todo.type && (
+            <span className="bg-indigo-900 px-3 py-1 rounded-lg text-sm sm:text-base">
+              {todo.type}
+            </span>
           )}
         </div>
-      )}
+
+        {/* Description */}
+        {todo.description && (
+          <p className="text-gray-300 whitespace-pre-wrap wrap-break-word overflow-hidden mt-2 text-sm sm:text-base">
+            {todo.description}
+          </p>
+        )}
+
+        {/* Problem Steps */}
+        {todo.problemSteps && (
+          <div className="mt-10">
+            <h3 className="text-lg sm:text-xl font-semibold">Problem Steps</h3>
+            <pre className="text-gray-300 text-sm whitespace-pre-wrap wrap-break-word overflow-hidden mt-2">
+              {todo.problemSteps}
+            </pre>
+          </div>
+        )}
+
+        {/* Fix Steps */}
+        {todo.fixSteps && (
+          <div className="mt-12 mb-20">
+            <h3 className="text-lg sm:text-xl font-semibold">Fix Steps</h3>
+            <pre className="text-gray-300 text-sm whitespace-pre-wrap wrap-break-word overflow-hidden mt-2">
+              {todo.fixSteps}
+            </pre>
+          </div>
+        )}
+
+        {/* Code Block (mobile scrollable) */}
+        {todo.code && (
+          <div>
+            <h3 className="text-lg sm:text-xl font-semibold">Code</h3>
+            <div className="overflow-x-auto rounded-lg">
+              <SyntaxHighlighter language="javascript" style={atomDark}>
+                {todo.code}
+              </SyntaxHighlighter>
+            </div>
+          </div>
+        )}
+
+        {/* Image */}
+        {todo.imageUrl && (
+          <div className="flex justify-center">
+            {todo.imageUrl.endsWith(".txt") ? (
+              <a
+                href={`${import.meta.env.VITE_API_IMAGE}${todo.imageUrl}`}
+                target="_blank"
+                className="text-blue-400 underline text-sm sm:text-base"
+              >
+                View Text File
+              </a>
+            ) : (
+              <img
+                src={`${import.meta.env.VITE_API_IMAGE}${todo.imageUrl}`}
+                alt="Todo"
+                className="rounded-2xl max-w-full sm:max-w-xs"
+                onError={e => (e.target.style.display = "none")}
+              />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

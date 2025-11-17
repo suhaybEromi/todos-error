@@ -30,7 +30,7 @@ const Signin = () => {
   if (loading) return <></>;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-indigo-50 to-blue-100">
+    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-indigo-50 to-blue-100 text-black">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6 text-indigo-600">
           Welcome Back
@@ -45,6 +45,7 @@ const Signin = () => {
               value={form.email}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none"
+              required
             />
           </div>
 
@@ -56,6 +57,7 @@ const Signin = () => {
               value={form.password}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none"
+              required
             />
           </div>
 

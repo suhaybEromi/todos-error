@@ -31,11 +31,9 @@ const Todos = () => {
     fetchTodos();
   }, []);
 
-  if (loading) return <p></p>;
-
   return (
     <div>
-      <TodoList todos={todos} onDelete={handleDelete} />
+      {loading ? <></> : <TodoList todos={todos} onDelete={handleDelete} />}
     </div>
   );
 };

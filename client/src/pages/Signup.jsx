@@ -36,7 +36,7 @@ const Signup = () => {
           Create Account
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-black">
           <div>
             <label className="block text-sm font-medium mb-1">Username</label>
             <input
@@ -45,6 +45,7 @@ const Signup = () => {
               value={form.username}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none"
+              required
             />
           </div>
 
@@ -56,6 +57,7 @@ const Signup = () => {
               value={form.email}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none"
+              required
             />
           </div>
 
@@ -67,6 +69,7 @@ const Signup = () => {
               value={form.password}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none"
+              required
             />
           </div>
 
@@ -85,7 +88,7 @@ const Signup = () => {
           </button>
         </form>
 
-        <p className="text-center text-sm mt-4">
+        <p className="text-center text-sm mt-4 text-black">
           Already have an account?{" "}
           <Link to="/signin" className="text-indigo-600 hover:underline">
             Sign in

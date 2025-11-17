@@ -135,7 +135,7 @@ const TodoForm = () => {
       </h2>
 
       <form
-        className="p-3 md:px-10 lg:p-4 text-white rounded grid grid-cols-2 gap-6  lg:w-270 mx-auto max-w-3xl lg:max-w-none"
+        className="p-1 md:p-3 lg:p-4 text-white rounded grid grid-cols-2 gap-6 mx-auto w-full max-w-5xl"
         onSubmit={handleSubmit}
       >
         <div className="col-span-2 lg:col-span-1">
@@ -147,7 +147,7 @@ const TodoForm = () => {
             placeholder="Title"
             value={formData.title}
             onChange={handleChange}
-            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 
+            className={`mt-1 border p-3 rounded w-full max-w-3xl focus:outline-none focus:ring-2 
       ${
         error.title
           ? "border-red-500 focus:ring-red-500"
@@ -168,7 +168,7 @@ const TodoForm = () => {
             placeholder="Description"
             value={formData.description}
             onChange={handleChange}
-            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 
+            className={`mt-1 border p-3 rounded w-full max-w-3xl focus:outline-none focus:ring-2 
       ${
         error.description
           ? "border-red-500 focus:ring-red-500"
@@ -190,7 +190,7 @@ const TodoForm = () => {
             placeholder="Problem Steps (each step on new line)"
             value={formData.problemSteps}
             onChange={handleChange}
-            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 focus:ring-blue-400 
+            className={`mt-1 border p-3 rounded w-full max-w-3xl focus:outline-none focus:ring-2 focus:ring-blue-400 
             ${
               error.problemSteps
                 ? "border-red-500 focus:ring-red-500"
@@ -212,7 +212,7 @@ const TodoForm = () => {
             placeholder="Fix Steps (each step on new line)"
             value={formData.fixSteps}
             onChange={handleChange}
-            className={`mt-1 border p-3 rounded w-75 md:w-150 lg:w-full focus:outline-none focus:ring-2 focus:ring-blue-400
+            className={`mt-1 border p-3 rounded w-full max-w-3xl focus:outline-none focus:ring-2 focus:ring-blue-400
             ${
               error.fixSteps
                 ? "border-red-500 focus:ring-red-500"
@@ -235,7 +235,7 @@ const TodoForm = () => {
               value={formData.code}
               onChange={handleChange}
               rows={8}
-              className="font-mono text-sm text-white bg-gray-900 border border-gray-300 rounded-lg p-4 w-75 md:w-150 lg:w-full resize-y shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className="font-mono text-sm text-white bg-gray-900 border border-gray-300 rounded-lg p-4 w-full max-w-3xl resize-y shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             />
           </div>
         </div>
@@ -248,7 +248,7 @@ const TodoForm = () => {
             accept="image/*"
             ref={fileInputRef}
             onChange={handleFileChange}
-            className="mt-1 border p-3 rounded w-75 md:w-150 lg:w-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 border p-3 rounded w-full max-w-120 md:w-full md:max-w-90 lg:w-full lg:max-w-120 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {preview && (
             <img
@@ -268,7 +268,7 @@ const TodoForm = () => {
             placeholder="Type (e.g. Bug, UI, Server, English)"
             value={formData.type}
             onChange={handleChange}
-            className={`mt-1 border p-2 rounded w-75 md:w-67 lg:w-full focus:outline-none focus:ring-2 focus:ring-blue-400
+            className={`mt-1 border p-2 rounded w-full max-w-3xl focus:outline-none focus:ring-2 focus:ring-blue-400
             ${
               error.type
                 ? "border-red-500 focus:ring-red-500"
@@ -282,13 +282,13 @@ const TodoForm = () => {
         </div>
 
         <div className="col-span-2 md:col-span-1 lg:col-span-1">
-          <label className="font-medium md:-ms-11 lg:ms-11">Status</label>
+          <label className="font-medium">Status</label>
           <br />
           <select
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className=" mt-1 border p-2 rounded w-75 md:w-73 lg:w-full md:-ms-12 lg:ms-12 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className=" mt-1 border p-2 rounded w-full max-w-3xl focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option className="bg-gray-900" value="In Progress">
               In Progress
@@ -299,10 +299,10 @@ const TodoForm = () => {
           </select>
         </div>
 
-        <div className="col-span-2 flex justify-center lg:justify-start md:-ms-27 lg:ms-0">
+        <div className="col-span-2 flex justify-center lg:justify-start">
           <button
             type="submit"
-            className="cursor-pointer w-40 md:w-60 lg:w-60 mb-6 items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="cursor-pointer w-45 md:w-full md:max-w-65 mb-6 items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             {id ? "Update" : "Create"}
           </button>

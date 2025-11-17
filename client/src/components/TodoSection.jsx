@@ -20,23 +20,25 @@ export default function TodoSection({
           {todos.map(todo => (
             <div
               key={todo._id}
-              className="grid grid-cols-26 w-315 mx-auto text-[15px]"
+              className="grid grid-cols-26 w-full max-w-7xl mx-auto text-[15px]"
             >
-              <div className="col-span-8">
-                <p className="px-4 py-2 border border-gray-300">{todo.title}</p>
+              <div className="col-span-17 lg:col-span-7 xl:col-span-8">
+                <p className="px-2 lg:px-4 py-2 border border-gray-300">
+                  {todo.title}
+                </p>
               </div>
 
-              <div className="col-span-3">
+              <div className="col-span-4 xl:col-span-3 hidden lg:block">
                 <p className="px-4 py-2 border border-gray-300">
                   {icon} {todo.status}
                 </p>
               </div>
 
-              <div className="col-span-4">
+              <div className="col-span-4 hidden lg:block">
                 <p className="px-4 py-2 border border-gray-300">{todo.type}</p>
               </div>
 
-              <div className="col-span-5">
+              <div className="col-span-5 hidden lg:block">
                 <p className="px-4 py-2 border border-gray-300">
                   {todo.createdAt
                     ? new Date(todo.createdAt).toLocaleString()
@@ -44,8 +46,8 @@ export default function TodoSection({
                 </p>
               </div>
 
-              <div className="col-span-2 text-center">
-                <p className="px-4 py-2 border border-gray-300">
+              <div className="col-span-3 lg:col-span-2 text-center">
+                <p className="px-2 lg:px-4 py-2 border border-gray-300">
                   <button
                     className="cursor-pointer"
                     onClick={() => navigate(`/todo/${todo._id}`)}
@@ -55,8 +57,8 @@ export default function TodoSection({
                 </p>
               </div>
 
-              <div className="col-span-2 text-center">
-                <p className="px-4 py-2 border border-gray-300">
+              <div className="col-span-3 lg:col-span-2 text-center">
+                <p className="px-2 lg:px-4 py-2 border border-gray-300">
                   <button
                     className="cursor-pointer"
                     onClick={() => navigate(`/edit-todo/${todo._id}`)}
@@ -66,8 +68,8 @@ export default function TodoSection({
                 </p>
               </div>
 
-              <div className="col-span-2 text-center">
-                <p className="px-4 py-2 border border-gray-300 text-red-600">
+              <div className="col-span-3 lg:col-span-2 text-center">
+                <p className="px-2 lg:px-4 py-2 border border-gray-300 text-red-600">
                   <button
                     className="cursor-pointer"
                     onClick={() => onDelete(todo._id)}
