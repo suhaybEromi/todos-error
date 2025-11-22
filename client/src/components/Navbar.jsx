@@ -15,7 +15,7 @@ export default function Navbar() {
     <nav className="bg-linear-to-bt from-gray-950 to-indigo-950 mb-1">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
-        <h1 className="text-2xl font-bold text-gray-300">Todo List</h1>
+        <h1 className="text-2xl font-bold text-white">Todo List</h1>
 
         {/* Mobile Toggle Button */}
         <button

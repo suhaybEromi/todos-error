@@ -12,6 +12,40 @@ const createRefreshToken = user =>
     expiresIn: "7d",
   });
 
+const oauthSuccess = (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/signin?error=oauth-no-user`,
+      );
+    }
+
+    const accessToken = createAccessToken(req.user);
+    const refreshToken = createRefreshToken(req.user);
+
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
+  } catch (err) {
+    console.log(err);
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/signin?error=oauth-server`,
+    );
+  }
+};
+
 const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -120,4 +154,4 @@ const logout = (req, res) => {
   }
 };
 
-export default { signup, signin, refresh, profile, logout };
+export default { signup, signin, refresh, profile, logout, oauthSuccess };

@@ -2,9 +2,14 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  username: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  username: { type: String },
+  email: { type: String, unique: true, sparse: true },
+  password: { type: String },
+
+  // social logins
+  googleId: { type: String, unique: true, sparse: true },
+  githubId: { type: String, unique: true, sparse: true },
+
   role: { type: String, enum: ["admin", "user"], default: "user" },
 });
 

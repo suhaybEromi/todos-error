@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import api from "../api/api";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import LoadingScreen from "../components/LoadingScreen";
+import { motion } from "framer-motion";
 
 const TodoDetails = () => {
   const { id } = useParams();
@@ -25,7 +27,11 @@ const TodoDetails = () => {
   }, [id]);
 
   if (loading)
-    return <p className="text-white text-center mt-10">Loading...</p>;
+    return (
+      <div class="flex items-center justify-center">
+        <div class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-400 mt-5 border-t-transparent"></div>
+      </div>
+    );
   if (error) return <p className="text-red-500 text-center">{error}</p>;
   if (!todo) return <p>No data found.</p>;
 

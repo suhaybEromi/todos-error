@@ -1,4 +1,3 @@
-// src/pages/Signup.jsx
 import { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -26,8 +25,6 @@ const Signup = () => {
       setLoading(false);
     }
   };
-
-  if (loading) return <></>;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-50 to-indigo-100">
@@ -82,7 +79,7 @@ const Signup = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition disabled:opacity-60"
+            className="cursor-pointer w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition disabled:opacity-60"
           >
             {loading ? "Creating account..." : "Sign up"}
           </button>

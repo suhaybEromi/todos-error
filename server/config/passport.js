@@ -17,6 +17,7 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
+
         if (!user) {
           user = await User.create({
             googleId: profile.id,
@@ -47,7 +48,7 @@ passport.use(
           user = await User.create({
             githubId: profile.id,
             name: profile.displayName || profile.username,
-            email: profile.emails?.[0]?.value || "",
+            email: profile.emails?.[0]?.value || undefined,
           });
         }
         return done(null, user);

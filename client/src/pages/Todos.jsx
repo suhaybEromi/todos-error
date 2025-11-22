@@ -33,7 +33,13 @@ const Todos = () => {
 
   return (
     <div>
-      {loading ? <></> : <TodoList todos={todos} onDelete={handleDelete} />}
+      {loading ? (
+        <div class="flex items-center justify-center">
+          <div class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-400 mt-5 border-t-transparent"></div>
+        </div>
+      ) : (
+        <TodoList todos={todos} onDelete={handleDelete} />
+      )}
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import express from "express";
 import passport from "passport";
-import jwt from "jsonwebtoken";
 
 const router = express.Router();
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+import userController from "../controllers/user.controller.js";
 
 // Google Login
 router.get(
@@ -12,20 +13,11 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    const token = jwt.sign(
-      { id: req.user._id },
-      process.env.JWT_ACCESS_SECRET,
-      { expiresIn: "15m" },
-    );
-    res.cookie("access_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
-    res.redirect(process.env.FRONTEND_URL); // redirect to frontend
-  },
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${FRONTEND_URL}/signin?error=google`,
+  }),
+  userController.oauthSuccess,
 );
 
 // GitHub Login
@@ -36,20 +28,11 @@ router.get(
 
 router.get(
   "/github/callback",
-  passport.authenticate("github", { failureRedirect: "/login" }),
-  (req, res) => {
-    const token = jwt.sign(
-      { id: req.user._id },
-      process.env.JWT_ACCESS_SECRET,
-      { expiresIn: "15m" },
-    );
-    res.cookie("access_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
-    res.redirect(process.env.FRONTEND_URL); // redirect to frontend
-  },
+  passport.authenticate("github", {
+    session: false,
+    failureRedirect: `${FRONTEND_URL}/signin?error=github`,
+  }),
+  userController.oauthSuccess,
 );
 
 export default router;

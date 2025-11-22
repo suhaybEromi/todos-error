@@ -1,7 +1,8 @@
-// src/pages/Signin.jsx
 import { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import { FaGoogle } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 const Signin = () => {
   const { signin } = useContext(AuthContext);
@@ -26,8 +27,6 @@ const Signin = () => {
       setLoading(false);
     }
   };
-
-  if (loading) return <></>;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-indigo-50 to-blue-100 text-black">
@@ -70,7 +69,7 @@ const Signin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition disabled:opacity-60"
+            className="cursor-pointer w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
@@ -82,6 +81,24 @@ const Signin = () => {
             Create one
           </Link>
         </p>
+
+        <p className="text-center my-5 font-medium">or</p>
+
+        <Link
+          to={`${import.meta.env.VITE_API_URL}/auth/google`}
+          className="flex items-center justify-center gap-2 border border-gray-600 text-black py-2 rounded-full hover:bg-black hover:text-white transition-all"
+        >
+          <FaGoogle className="text-red-500" />
+          Continue with Google
+        </Link>
+
+        <Link
+          to={`${import.meta.env.VITE_API_URL}/auth/github`}
+          className="flex items-center justify-center gap-2 bg-gray-800 text-white py-2 rounded-full hover:bg-black transition-all mt-3"
+        >
+          <FaGithub />
+          Continue with GitHub
+        </Link>
       </div>
     </div>
   );
