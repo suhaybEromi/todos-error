@@ -3,8 +3,17 @@ import deleteFile from "../utils/deleteFile.js";
 
 // 🟢 Get all todos for logged-in user
 const getTodos = async (req, res) => {
+  const search = req.query.search || "";
   try {
-    const todos = await Todo.find({ createdBy: req.user.id }).sort({
+    const query = { createdBy: req.user.id };
+
+    if (search)
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { type: { $regex: search, $options: "i" } },
+      ];
+
+    const todos = await Todo.find(query).sort({
       createdAt: -1,
     });
 
