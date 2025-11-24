@@ -23,7 +23,7 @@ const TodoForm = () => {
     const fetchTodo = async () => {
       if (id) {
         try {
-          const res = await api.get(`/todo/${id}`);
+          const res = await api.get(`/api/todo/${id}`);
           const todo = res.data;
 
           setFormData({
@@ -89,11 +89,11 @@ const TodoForm = () => {
 
     try {
       if (id) {
-        await api.put(`/update-todo/${id}`, data, {
+        await api.put(`/api/update-todo/${id}`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        await api.post("/add-todo", data, {
+        await api.post("/api/add-todo", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }

@@ -32,7 +32,7 @@ export default function TodoSearchDropdown({
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await api.get(`/todo?search=${encodeURIComponent(q)}`);
+        const res = await api.get(`/api/todo?search=${encodeURIComponent(q)}`);
         setSuggestions(res.data || []);
         setOpen(true);
         setActiveIndex(res.data?.length ? 0 : -1);

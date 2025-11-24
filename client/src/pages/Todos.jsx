@@ -11,7 +11,7 @@ const Todos = () => {
 
   const fetchTodos = async () => {
     try {
-      const res = await api.get("/todo");
+      const res = await api.get("/api/todo");
       setTodos(res.data);
     } catch (err) {
       console.error(err);
@@ -23,7 +23,7 @@ const Todos = () => {
   const handleDelete = async id => {
     if (!window.confirm("Are you sure you want to delete this todo?")) return;
     try {
-      await api.delete(`/delete-todo/${id}`);
+      await api.delete(`/api/delete-todo/${id}`);
       setTodos(prev => prev.filter(t => t._id !== id));
     } catch (err) {
       console.error(err);

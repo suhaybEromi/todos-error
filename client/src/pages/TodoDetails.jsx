@@ -3,8 +3,6 @@ import { useParams, Link } from "react-router-dom";
 import api from "../api/api";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import LoadingScreen from "../components/LoadingScreen";
-import { motion } from "framer-motion";
 
 const TodoDetails = () => {
   const { id } = useParams();
@@ -15,7 +13,7 @@ const TodoDetails = () => {
   useEffect(() => {
     const fetchTodo = async () => {
       try {
-        const res = await api.get(`/todo/${id}`);
+        const res = await api.get(`/api/todo/${id}`);
         setTodo(res.data);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch todo");
