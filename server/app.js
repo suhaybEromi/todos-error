@@ -19,7 +19,10 @@ import authRoutes from "./routes/auth.routes.js";
 
 app.use(cookieParser());
 
-const allowedOrigins = ["http://localhost:5173", process.env.FRONTEND_URL];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://todos-error.vercel.app",
+];
 
 app.use(
   cors({
@@ -30,6 +33,15 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
+    credentials: true,
+  }),
+);
+
+// Fix preflight
+app.options(
+  "*",
+  cors({
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
@@ -63,7 +75,9 @@ const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Database connection success");
-    app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on ${PORT}`);
+    });
   } catch (err) {
     console.log("Database connection failed:", err);
   }
