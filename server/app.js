@@ -19,10 +19,7 @@ import authRoutes from "./routes/auth.routes.js";
 
 app.use(cookieParser());
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://todos-error.vercel.app",
-];
+const allowedOrigins = [process.env.FRONTEND_URL];
 
 app.use(
   cors({
