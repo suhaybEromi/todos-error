@@ -10,19 +10,19 @@ export default function AuthContextProvider({ children }) {
   const navigate = useNavigate();
 
   const signup = async payload => {
-    const res = await api.post("/auth/signup", payload);
+    const res = await api.post("/api/signup", payload);
     return res.data;
   };
 
   const signin = async payload => {
-    const res = await api.post("/auth/signin", payload);
+    const res = await api.post("/api/signin", payload);
     if (res.data?.user) setUser(res.data.user);
     else setUser({ loggedIn: true });
     return res.data;
   };
 
   const logout = async () => {
-    await api.post("/auth/logout");
+    await api.post("/api/logout");
     setUser(null);
     navigate("/signin");
   };
@@ -32,10 +32,10 @@ export default function AuthContextProvider({ children }) {
     const restoreSession = async () => {
       try {
         // try to refresh token
-        await api.get("/auth/refresh");
+        await api.get("/api/refresh");
 
         // now try to get user info
-        const res = await api.get("/auth/me");
+        const res = await api.get("/api/me");
         setUser(res.data);
       } catch (err) {
         // if backend says unauthorized (401), that’s normal after logout
